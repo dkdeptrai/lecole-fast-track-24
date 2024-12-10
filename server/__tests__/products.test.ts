@@ -85,7 +85,10 @@ describe("Products API", () => {
           INSERT INTO products (name, description, price, stock) 
           VALUES 
             ('Test Product 1', 'Description 1', 19.99, 10),
-            ('Test Product 2', 'Description 2', 29.99, 20)
+            ('Test Product 2', 'Description 2', 29.99, 20),
+            ('Test Product 3', 'Description 3', 39.99, 30),
+            ('Test Product 4', 'Description 4', 49.99, 40),
+            ('Test Product 5', 'Description 5', 59.99, 50)
         `,
           (err) => {
             if (err) reject(err);
@@ -95,15 +98,59 @@ describe("Products API", () => {
       });
     });
 
-    it("should return a list of products", async () => {
-      const res = await request(app).get("/api/products").expect(200);
+    it("should return a paginated list of products", async () => {
+      const page = 1;
+      const pageSize = 2;
 
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThan(0);
-      expect(res.body[0]).toHaveProperty("name");
-      expect(res.body[0]).toHaveProperty("description");
-      expect(res.body[0]).toHaveProperty("price");
-      expect(res.body[0]).toHaveProperty("stock");
+      const res = await request(app)
+        .get("/api/products")
+        .query({ page, pageSize })
+        .expect(200);
+
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBe(pageSize);
+
+      expect(res.body.data[0].name).toBe("Test Product 1");
+      expect(res.body.data[1].name).toBe("Test Product 2");
+    });
+
+    it("should handle pagination and return the second page", async () => {
+      const page = 2;
+      const pageSize = 2;
+
+      const res = await request(app)
+        .get("/api/products")
+        .query({ page, pageSize })
+        .expect(200);
+
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBe(pageSize);
+
+      expect(res.body.data[0].name).toBe("Test Product 3");
+      expect(res.body.data[1].name).toBe("Test Product 4");
+    });
+
+    it("should return an empty array for a non-existent page", async () => {
+      const page = 100;
+      const pageSize = 2;
+
+      const res = await request(app)
+        .get("/api/products")
+        .query({ page, pageSize })
+        .expect(200);
+
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBe(0);
+    });
+
+    it("should return 400 for invalid pagination parameters", async () => {
+      const res = await request(app)
+        .get("/api/products")
+        .query({ page: -1, pageSize: 0 })
+        .expect(400);
+
+      expect(res.body.errors).toBeDefined();
+      expect(res.body.errors[0].msg).toBe("Invalid pagination parameters.");
     });
   });
 

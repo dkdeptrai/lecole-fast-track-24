@@ -7,10 +7,39 @@ export const getProducts = async (
   res: Response
 ): Promise<void> => {
   try {
-    const rows = await dbPromise("SELECT * FROM products", []);
-    res.json(rows);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    const page: number = parseInt(req.query.page as string, 10) || 1;
+    const pageSize: number = parseInt(req.query.pageSize as string, 10) || 10;
+
+    const offset = (page - 1) * pageSize;
+
+    const rows = await dbPromise("SELECT * FROM products LIMIT ? OFFSET ?", [
+      pageSize,
+      offset,
+    ]);
+
+    const totalCountResult = await dbPromise(
+      "SELECT COUNT(*) as count FROM products",
+      []
+    );
+    const totalCount = totalCountResult[0].count;
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    res.json({
+      data: rows || [],
+      currentPage: page,
+      totalCount,
+      totalPages,
+    });
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -42,6 +71,7 @@ export const createProduct = async (
     res.status(500).json({ error: (err as Error).message });
   }
 };
+
 export const getProduct = async (
   req: Request,
   res: Response

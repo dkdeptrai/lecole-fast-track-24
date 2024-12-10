@@ -1,6 +1,6 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
-export const validateProduct = [
+export const validateProductForm = [
   body("name").notEmpty().withMessage("Name is required"),
   body("price")
     .isFloat({ gt: 0 })
@@ -8,4 +8,15 @@ export const validateProduct = [
   body("stock")
     .isInt({ min: 0 })
     .withMessage("Stock must be a non-negative integer"),
+];
+
+export const validateProductQuery = [
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Invalid pagination parameters."),
+  query("pageSize")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Invalid pagination parameters."),
 ];
