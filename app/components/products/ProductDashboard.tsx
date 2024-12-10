@@ -8,6 +8,7 @@ import {
 import { Product } from "../../lib/types.ts";
 import ProductTable from "./ProductTable.tsx";
 import { TextField } from "~/components/ui/TextField";
+import { Button } from "../ui/button.tsx";
 
 const ProductDashboard: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -180,19 +181,13 @@ const ProductDashboard: React.FC = () => {
           placeholder="Stock"
         />
         <div className="flex space-x-4 mt-4">
-          <button
-            onClick={handleSave}
-            className="bg-blue-500 text-white p-2 rounded"
-          >
+          <Button variant={"default"} onClick={handleSave}>
             {editingProductId ? "Update Product" : "Add Product"}
-          </button>
+          </Button>
           {editingProductId && (
-            <button
-              onClick={handleCancel}
-              className="bg-gray-500 text-white p-2 rounded"
-            >
+            <Button variant={"default"} onClick={handleCancel}>
               Cancel
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -208,23 +203,23 @@ const ProductDashboard: React.FC = () => {
 
       {/* Pagination Controls */}
       <div className="mt-6 flex justify-between items-center">
-        <button
+        <Button
+          variant={"default"}
           disabled={paginationModel.page <= 1}
           onClick={() => handlePaginationChange(paginationModel.page - 1)}
-          className="bg-gray-500 text-white p-2 rounded"
         >
           Previous
-        </button>
+        </Button>
         <span>
           Page {paginationModel.page} of {paginationModel.totalPages}
         </span>
-        <button
+        <Button
+          variant={"default"}
           disabled={paginationModel.page >= paginationModel.totalPages}
           onClick={() => handlePaginationChange(paginationModel.page + 1)}
-          className="bg-gray-500 text-white p-2 rounded"
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );
