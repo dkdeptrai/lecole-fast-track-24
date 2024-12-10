@@ -1,6 +1,6 @@
 import React from "react";
 import { Product } from "~/lib/types";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 
 interface ProductTableProps {
   products: Product[];
