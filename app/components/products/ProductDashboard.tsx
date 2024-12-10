@@ -19,6 +19,8 @@ const ProductDashboard: React.FC = () => {
     stock: 0,
   });
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -96,6 +98,7 @@ const ProductDashboard: React.FC = () => {
         stock: product.stock,
       });
       setEditingProductId(id);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -109,6 +112,14 @@ const ProductDashboard: React.FC = () => {
     } catch (error: any) {
       setError(error?.response?.data?.error || "Error deleting product.");
       setSuccess(null);
+    }
+  };
+
+  const handleMassDelete = async (ids: string[]) => {
+    if (window.confirm("Are you sure you want to delete these products?")) {
+      await Promise.all(ids.map((id) => deleteProduct(id)));
+      setSelectedProductIds([]);
+      fetchProducts();
     }
   };
 
@@ -197,12 +208,15 @@ const ProductDashboard: React.FC = () => {
           products={products}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          setSelectedProductIds={setSelectedProductIds}
+          selectedProductIds={selectedProductIds}
+          onMassDelete={handleMassDelete}
           editingProductId={editingProductId}
         />
       </div>
 
       {/* Pagination Controls */}
-      <div className="mt-6 flex justify-between items-center">
+      <div className="mt-6 mx-auto w-fit flex gap-8 justify-between items-center">
         <Button
           variant={"default"}
           disabled={paginationModel.page <= 1}
