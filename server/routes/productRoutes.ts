@@ -7,14 +7,17 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/productsController.ts";
-import { validateProduct } from "../validations/productValidation.ts";
+import {
+  validateProductQuery,
+  validateProductForm,
+} from "../validations/productValidation.ts";
 
 const router = Router();
 
-router.post("/", validateProduct, createProduct);
-router.get("/", getProducts);
+router.post("/", validateProductForm, createProduct);
+router.get("/", validateProductQuery, getProducts);
 router.get("/:id", getProduct);
-router.put("/:id", validateProduct, updateProduct);
+router.put("/:id", validateProductForm, updateProduct);
 router.delete("/:id", deleteProduct);
 
 export default router;

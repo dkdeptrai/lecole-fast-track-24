@@ -18,18 +18,33 @@ const ProductDashboard: React.FC = () => {
     stock: 0,
   });
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [paginationModel, setPaginationModel] = useState({
+    page: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0,
+  });
+
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [paginationModel.page]);
 
   const fetchProducts = async () => {
     try {
-      const data = await getProducts();
-      setProducts(data);
+      const data = await getProducts(
+        paginationModel.page,
+        paginationModel.pageSize
+      );
+
+      setPaginationModel({
+        ...paginationModel,
+        totalCount: data.totalCount,
+        totalPages: data.totalPages,
+      });
+      setProducts(data.products);
     } catch (error: any) {
       setError(error?.response?.data?.error || "Error fetching products.");
       setSuccess(null);
@@ -101,6 +116,10 @@ const ProductDashboard: React.FC = () => {
     setEditingProductId(null);
     setError(null);
     setSuccess(null);
+  };
+
+  const handlePaginationChange = (page: number) => {
+    setPaginationModel((prev) => ({ ...prev, page }));
   };
 
   return (
@@ -185,6 +204,27 @@ const ProductDashboard: React.FC = () => {
           onEdit={handleEdit}
           editingProductId={editingProductId}
         />
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="mt-6 flex justify-between items-center">
+        <button
+          disabled={paginationModel.page <= 1}
+          onClick={() => handlePaginationChange(paginationModel.page - 1)}
+          className="bg-gray-500 text-white p-2 rounded"
+        >
+          Previous
+        </button>
+        <span>
+          Page {paginationModel.page} of {paginationModel.totalPages}
+        </span>
+        <button
+          disabled={paginationModel.page >= paginationModel.totalPages}
+          onClick={() => handlePaginationChange(paginationModel.page + 1)}
+          className="bg-gray-500 text-white p-2 rounded"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
