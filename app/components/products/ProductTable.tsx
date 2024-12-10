@@ -17,7 +17,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
 }) => {
   return (
     <div className="overflow-x-auto">
-      {" "}
       {/* Add horizontal scrolling */}
       <table className="min-w-full border-collapse border border-gray-200">
         <thead>
@@ -42,7 +41,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <td className="border border-gray-300 px-4 py-2">
                 {product.name}
               </td>
-              <td className="border border-gray-300 px-4 py-2">
+              <td className="border border-gray-300 px-4 py-2 max-w-xs overflow-auto">
                 {product.description}
               </td>
               <td className="border border-gray-300 px-4 py-2">
