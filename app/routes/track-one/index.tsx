@@ -1,6 +1,6 @@
 import type { Route } from "../track-one/+types";
 
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui/Button";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Track One" }];
