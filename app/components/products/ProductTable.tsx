@@ -54,13 +54,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
                 <div className="flex flex-col gap-2">
                   <Button
                     onClick={() => onEdit(product.id)}
-                    className="bg-blue-500 w-full text-white"
+                    variant={"default"}
                   >
                     Edit
                   </Button>
                   <Button
+                    variant={"destructive"}
                     onClick={() => onDelete(product.id)}
-                    className="bg-red-500 w-full text-white"
                   >
                     Delete
                   </Button>
